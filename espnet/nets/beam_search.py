@@ -359,6 +359,8 @@ class BeamSearch(torch.nn.Module):
         else:
             maxlen = max(1, int(maxlenratio * x.size(0)))
         minlen = int(minlenratio * x.size(0))
+
+        logging.getLogger().setLevel(logging.INFO)
         logging.info("decoder input length: " + str(x.shape[0]))
         logging.info("max output length: " + str(maxlen))
         logging.info("min output length: " + str(minlen))
@@ -371,6 +373,11 @@ class BeamSearch(torch.nn.Module):
             best = self.search(running_hyps, x)
             # post process of one iteration
             running_hyps = self.post_process(i, maxlen, maxlenratio, best, ended_hyps)
+            logging.info(
+                    "running hypo: "
+                    + "".join([self.token_list[x] for x in running_hyps.yseq[1:-1][0]])
+                    + "\n"
+                )
             # end detection
             if maxlenratio == 0.0 and end_detect([h.asdict() for h in ended_hyps], i):
                 logging.info(f"end detected at {i}")
@@ -403,12 +410,15 @@ class BeamSearch(torch.nn.Module):
         logging.info(f"total log probability: {best.score:.2f}")
         logging.info(f"normalized log probability: {best.score / len(best.yseq):.2f}")
         logging.info(f"total number of ended hypotheses: {len(nbest_hyps)}")
+
+
         if self.token_list is not None:
-            logging.info(
-                "best hypo: "
-                + "".join([self.token_list[x] for x in best.yseq[1:-1]])
-                + "\n"
-            )
+            for best in nbest_hyps:
+                logging.info(
+                    "best hypo: "
+                    + "".join([self.token_list[x] for x in best.yseq[1:-1]])
+                    + "\n"
+                )
         return nbest_hyps
 
     def post_process(

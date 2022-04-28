@@ -6,3 +6,11 @@ __pycache__/
 *.pyc
 *.tar
 .DS_Store
+
+language_models/LRS2/lm_en/
+language_models/LRS3/lm_en/
+models/LRS2/LRS2_V_WER26.1/
+models/LRS3/LRS3_V_WER32.3/
+tools/face_alignment/
+tools/face_detection/
+
