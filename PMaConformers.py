@@ -167,10 +167,10 @@ def one_step_inference(lipreader, data_filename, landmarks_filename, dst_filenam
         assert dst_filename[-4:] == ".npz", f"the ext of {dst_filename} should be .npz"
         print(f"embedding is saved to {dst_filename}.")
         save2npz(dst_filename, data=output.cpu().detach().numpy())
-    return
+    return output
 
 
-def main():
+def main(args):
 
     # -- pick device for inference.
     if torch.cuda.is_available() and args.gpu_idx >= 0:
@@ -185,8 +185,9 @@ def main():
         face_track=not args.landmarks_filename and not args.landmarks_dir,
     )
     
+    sentence = ""
     if args.data_filename is not None:
-        one_step_inference(
+        sentence = one_step_inference(
             lipreader,
             args.data_filename,
             args.landmarks_filename,
@@ -204,7 +205,8 @@ def main():
             open(args.labels_filename).read().splitlines(),
             args.dst_dir,
         )
-
-
+    
+    return sentence
+    
 if __name__ == '__main__':
     main()

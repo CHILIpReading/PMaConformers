@@ -56,7 +56,8 @@ class LipreadingPipeline(object):
 
         if face_track and self.modality == "video":
             from tracker.face_tracker import FaceTracker
-            self.face_tracker = FaceTracker(device="cuda:0")
+            #self.face_tracker = FaceTracker(device="cuda:0")
+            self.face_tracker = FaceTracker(device=device)
         else:
             self.face_tracker = None
 
@@ -86,17 +87,21 @@ class LipreadingPipeline(object):
                 assert self.face_tracker is not None, "face tracker is not enabled."
                 end=time.time()
                 landmarks = self.face_tracker.tracker(data_filename)
-                print(len(landmarks))
-                print(landmarks)
+                #print(len(landmarks))
+                #print(landmarks)
                 print(f"face tracking speed: {len(landmarks)/(time.time()-end):.2f} fps.")
+                print("The face tracking took : ", time.time()-end)
 
         # Step 2, extract mouth patches from segments.
+        end=time.time()
         sequence = self.dataloader.load_data(
             data_filename,
             landmarks,
         )
+        print("The data loading took : ", time.time()-end)
 
         # Step 3, perform inference or extract mouth ROIs or speech representations.
+        end=time.time()
         if self.feats_position:
             if self.feats_position == "mouth":
                 assert self.modality == "video", "input modality should be `video`."
@@ -106,4 +111,5 @@ class LipreadingPipeline(object):
                 output = self.model.extract_feats(sequence)
         else:
             output = self.model.predict(sequence)
+        print("The inference took : ", time.time()-end)
         return output
