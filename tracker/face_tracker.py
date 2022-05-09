@@ -47,7 +47,6 @@ class FaceTracker(object):
             detected_faces = self.face_detector(frame, rgb=False)
             # -- face alignment
             landmarks, scores = self.landmark_detector(frame, detected_faces, rgb=False)
-            print(landmarks)
             face_info['bbox'].append(detected_faces)
             face_info['landmarks'].append(landmarks)
             face_info['landmarks_scores'].append(scores)

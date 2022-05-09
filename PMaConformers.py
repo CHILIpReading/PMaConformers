@@ -173,8 +173,8 @@ def one_step_inference(lipreader, data_filename, landmarks_filename, dst_filenam
 def main(args):
 
     # -- pick device for inference.
-    if torch.cuda.is_available() and args.gpu_idx >= 0:
-        device = torch.device(f"cuda:{args.gpu_idx}")
+    if torch.cuda.is_available():
+        device = torch.device(f"cuda:0")
     else:
         device = "cpu"
 
