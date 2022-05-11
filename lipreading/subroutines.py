@@ -43,6 +43,7 @@ class LipreadingPipeline(object):
             self.input_v_fps = config.getfloat("input", "v_fps")
             self.model_v_fps = config.getfloat("model", "v_fps")
             self.modality = config.get("input", "modality")
+            self.face_tracking_model = config.get("input", "face_tracking_model")
 
             self.dataloader = AVSRDataLoader(
                 modality=self.modality,
@@ -54,12 +55,11 @@ class LipreadingPipeline(object):
                 device=device,
             )
 
+        self.face_tracker = None
         if face_track and self.modality == "video":
             from tracker.face_tracker import FaceTracker
             #self.face_tracker = FaceTracker(device="cuda:0")
-            self.face_tracker = FaceTracker(device=device)
-        else:
-            self.face_tracker = None
+            self.face_tracker = FaceTracker(device=device, model=self.face_tracking_model)
 
         self.feats_position = feats_position
 
