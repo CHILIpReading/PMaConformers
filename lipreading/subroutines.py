@@ -87,13 +87,13 @@ class LipreadingPipeline(object):
                 assert self.face_tracker is not None, "face tracker is not enabled."
                 end=time.time()
                 landmarks = self.face_tracker.tracker(data_filename)
-                #print(len(landmarks))
-                #print(landmarks)
+                
                 print(f"face tracking speed: {len(landmarks)/(time.time()-end):.2f} fps.")
                 print("The face tracking took : ", time.time()-end)
 
         # Step 2, extract mouth patches from segments.
         end=time.time()
+
         sequence = self.dataloader.load_data(
             data_filename,
             landmarks,

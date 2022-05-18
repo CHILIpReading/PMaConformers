@@ -9,7 +9,7 @@ from ibug.face_alignment import FANPredictor
 from .utils import get_landmarks
 from .utils import extract_opencv_generator
 
-#from mediapipe import Mediapipe
+from tracker.mediapipe_preprocess import Mediapipe
 
 
 class FaceTracker(object):
@@ -20,7 +20,8 @@ class FaceTracker(object):
 
         :param device: str, contain the device on which a torch.Tensor is or will be allocated.
         """
-        if model == "retina_fan":
+        self.model = model
+        if self.model == "retina_fan":
             # Create a RetinaFace detector using Resnet50 backbone.
             self.face_detector = RetinaFacePredictor(
                 device=device,
@@ -30,9 +31,9 @@ class FaceTracker(object):
             # Create FAN for alignmentm, default model is '2dfan2'
             alignment_weights = None
             self.landmark_detector = FANPredictor(device=device, model=alignment_weights)
-        elif model == "mediapipe":
-            self.face_detector = None
-            self.landmark_detector = None
+        elif self.model == "mediapipe":
+            self.face_detector = Mediapipe()
+            self.landmark_detector = lambda frame, *_, rgb: self.face_detector.get_landmarks_and_score()
         else: raise ValueError("input: face_tracking_process parameter in the config file is not recognised.")
 
 
@@ -50,7 +51,7 @@ class FaceTracker(object):
                 frame = frame_gen.__next__()
             except StopIteration:
                 break
-            # -- face detectionqq
+            # -- face detection
             detected_faces = self.face_detector(frame, rgb=False)
             # -- face alignment
             landmarks, scores = self.landmark_detector(frame, detected_faces, rgb=False)
@@ -62,5 +63,4 @@ class FaceTracker(object):
             #cv2.imshow("face_tracker", frame)
             #cv2.waitKey(1)
 
-        landmarks = get_landmarks(face_info)
-        return landmarks
+        return get_landmarks(face_info, self.model)

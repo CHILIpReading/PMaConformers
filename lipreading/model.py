@@ -143,12 +143,12 @@ class Lipreading(torch.nn.Module):
                 maxlenratio=self.maxlenratio,
                 minlenratio=self.minlenratio
                 )
+                
             nbest_hyps = [
                 h.asdict() for h in nbest_hyps[: min(len(nbest_hyps), self.nbest)]
             ]
 
             transcription = add_results_to_json(nbest_hyps, self.char_list)
-
         return transcription.replace("<eos>", "")
 
 

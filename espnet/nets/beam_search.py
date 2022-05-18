@@ -373,20 +373,22 @@ class BeamSearch(torch.nn.Module):
             best = self.search(running_hyps, x)
             # post process of one iteration
             running_hyps = self.post_process(i, maxlen, maxlenratio, best, ended_hyps)
-            logging.info(
-                    "running hypo: "
-                    + "".join([self.token_list[x] for x in running_hyps.yseq[1:-1][0]])
-                    + "\n"
-                )
+            
             # end detection
             if maxlenratio == 0.0 and end_detect([h.asdict() for h in ended_hyps], i):
                 logging.info(f"end detected at {i}")
                 break
             if len(running_hyps) == 0:
-                logging.info("no hypothesis. Finish decoding.")
+                print("no hypothesis. Finish decoding.")
                 break
             else:
                 logging.debug(f"remained hypotheses: {len(running_hyps)}")
+
+            logging.info(
+                    "running hypo: "
+                    + "".join([self.token_list[x] for x in running_hyps.yseq[1:-1][0]])
+                    + "\n"
+                )
 
         nbest_hyps = sorted(ended_hyps, key=lambda x: x.score, reverse=True)
         # check the number of hypotheses reaching to eos
