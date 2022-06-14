@@ -9,20 +9,24 @@ import mediapipe as mp
 import json
 import numpy as np
 
+import os
+path = os.environ['PMACONFORMERS_DIR']
+
 class Mediapipe():
-    def __init__(self, minDetectionConfidence=0.5):
+    def __init__(self, minDetectionConfidence=0.5, comparison = False):
         """ 
         @Input : 
             minDetectionConfidence = Minimume confidence that the detector should have to return the result
         """
         self.minDetectionConfidence = minDetectionConfidence
+        self.comparison = comparison
 
         self.mp_face_mesh = mp.solutions.face_mesh
 
         self.face_mesh = self.mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=minDetectionConfidence,
                                                      min_tracking_confidence=0.5)
 
-        with open("mediapipe_mapping/test", "r") as fp:
+        with open(path + "/mediapipe_mapping/test", "r") as fp:
             self.map = json.load(fp)
 
         self.bbox = None
@@ -60,8 +64,9 @@ class Mediapipe():
                 if y >= img_shape[0]:
                     y = img_shape[0]-1
                 f_landmarks.append((x,y))
-        
-        f_landmarks = np.array([f_landmarks[int(i)] for i in self.map])
+
+            if not self.comparison:
+                f_landmarks = np.array([f_landmarks[int(i)] for i in self.map])
 
         return f_landmarks
 
@@ -72,5 +77,5 @@ class Mediapipe():
         self.landmarks = face_landmarks
         return self.bbox
 
-    def __call__(self, frame, rgb):
+    def __call__(self, frame,  rgb = False):
         return self.findLandmarks(frame)

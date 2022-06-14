@@ -111,7 +111,7 @@ class AddNoise(object):
 
     def __call__(self, signal):
         assert signal.dtype in [np.float32, np.float64], "signal only supports float32 data type"
-        snr_target = random.choice(self.snr_levels) if not self.snr_target else self.snr_target
+        snr_target = random.choice(self.snr_levels) if self.snr_target is None else self.snr_target
         if snr_target == 9999:
             return signal
         else:

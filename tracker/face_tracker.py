@@ -15,7 +15,7 @@ from tracker.mediapipe_preprocess import Mediapipe
 class FaceTracker(object):
     """FaceTracker."""
 
-    def __init__(self, device="cuda:0", model="retina_fan"):
+    def __init__(self, device="cuda:0", model="retina_fan", comparison = False):
         """__init__.
 
         :param device: str, contain the device on which a torch.Tensor is or will be allocated.
@@ -32,7 +32,7 @@ class FaceTracker(object):
             alignment_weights = None
             self.landmark_detector = FANPredictor(device=device, model=alignment_weights)
         elif self.model == "mediapipe":
-            self.face_detector = Mediapipe()
+            self.face_detector = Mediapipe(comparison = comparison)
             self.landmark_detector = lambda frame, *_, rgb: self.face_detector.get_landmarks_and_score()
         else: raise ValueError("input: face_tracking_process parameter in the config file is not recognised.")
 

@@ -26,7 +26,7 @@ def compute_closest_landmarks(distance_map):
 
 def main():
     retina_fan = FaceTracker(device="cpu", model="retina_fan")
-    mediapipe = FaceTracker(device="cpu", model="mediapipe")
+    mediapipe = FaceTracker(device="cpu", model="mediapipe", comparison = True)
 
     video_path = "/home/david/test_landmarks.jpg"
     retina_landmarks = retina_fan.tracker(video_path)
