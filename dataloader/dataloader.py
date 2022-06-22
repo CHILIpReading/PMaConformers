@@ -165,9 +165,6 @@ class AVSRDataLoader(object):
             except StopIteration:
                 break
             
-            if len(landmarks) >= frame_idx:
-                landmarks.append(landmarks[-1])
-
             if frame_idx == 0:
                 sequence = []
                 sequence_frame = []
