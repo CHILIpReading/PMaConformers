@@ -1,7 +1,8 @@
 """ 
-@Author: David Roch
+@Author: David Roch, Daniel Tozadore
 @Date: 10.03.2022
-@Description : This Module track all faces in the images
+@Description : This Module is a twin of the Retina Fan algorithm supposed to take and give similar input and output
+to track all faces in the images using Mediapipe.
 """
 
 import cv2
@@ -10,7 +11,7 @@ import json
 import numpy as np
 
 import os
-path = os.environ['PMACONFORMERS_DIR']
+path = os.environ['VSR_DIR']
 
 class Mediapipe():
     def __init__(self, minDetectionConfidence=0.5, comparison = False):

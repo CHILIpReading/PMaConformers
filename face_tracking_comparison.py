@@ -1,9 +1,22 @@
+""" 
+@Author: David Roch, Daniel Tozadore
+@Date: 01.05.2022
+@Description: 
+    Comparison of Retina Fan landmarks with medipipe landmarks and map the Mediapipe points to the closest
+    Retina FAN one using a single image or the first image of a video.
+"""
+
 from tracker.face_tracker import FaceTracker
 
 import numpy as np
 import math
 import statistics
 import cv2
+
+
+image_path = "/home/david/test_landmarks.jpg"
+
+
 
 def compute_distance_map(retina_landmarks, mediapipe_landmarks):
     map = np.zeros((len(retina_landmarks),len(mediapipe_landmarks)))
@@ -28,9 +41,8 @@ def main():
     retina_fan = FaceTracker(device="cpu", model="retina_fan")
     mediapipe = FaceTracker(device="cpu", model="mediapipe", comparison = True)
 
-    video_path = "/home/david/test_landmarks.jpg"
-    retina_landmarks = retina_fan.tracker(video_path)
-    mediapipe_landmarks = mediapipe.tracker(video_path)
+    retina_landmarks = retina_fan.tracker(image_path)
+    mediapipe_landmarks = mediapipe.tracker(image_path)
 
     print("retina_landmarks shape: ", len(retina_landmarks), len(retina_landmarks[0]), len(retina_landmarks[0][0]))
     print("mediapipe_landmarks shape: ", len(mediapipe_landmarks), len(mediapipe_landmarks[0]), len(mediapipe_landmarks[0][0]))
@@ -49,8 +61,6 @@ def main():
     with open("mediapipe_mapping/test", "r") as fp:
         map = np.array(json.load(fp))
 
-
-    image_path = "/home/david/test_landmarks.jpg"
     img = cv2.imread(image_path)
 
     retina_img = img.copy()
