@@ -3,6 +3,7 @@
 
 # Copyright 2021 Imperial College London (Pingchuan Ma)
 # Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
+from fileinput import filename
 import os
 import sys
 import cv2
@@ -32,6 +33,9 @@ def load_audio(audio_filename, specified_sr=16000, int_16=True):
     :param int_16: boolean, return 16-bit PCM if set it as True.
     """
     try:
+        if audio_filename.endswith('mp4'):
+            audio_filename=audio_filename[:-9]+"audio.wav"
+
         if audio_filename.endswith('npy'):
             audio = np.load(audio_filename)
         elif audio_filename.endswith('npz'):
@@ -42,11 +46,25 @@ def load_audio(audio_filename, specified_sr=16000, int_16=True):
             audio = librosa.resample(audio, sr, specified_sr) if sr != specified_sr else audio
     except IOError:
         sys.exit()
+
     if int_16 and audio.dtype==np.float32:
         audio = ((audio - 1.) * (65535./2.) + 32767.).astype(np.int16)
         audio = np.array(np.clip(np.round(audio), -2**15, 2**15-1), dtype=np.int16)
     if not int_16 and audio.dtype==np.int16:
         audio = ((audio - 32767.) * 2 / 65535. + 1).astype(np.float32)
+
+    """
+    #Test if the sound read is correct
+    import sounddevice as sd
+    sd.play(audio, specified_sr)
+    import time
+    time.sleep(1)
+    from playsound import playsound
+    playsound(audio_filename)
+    time.sleep(1)
+    """
+
+
     return audio
 
 
